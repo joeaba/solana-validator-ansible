@@ -2,7 +2,7 @@
 
 - name: create log directory
   file:
-    path: /solana/log/
+    path: {{ solana_logs_location }}
     state: directory
     owner: solana
     group: solana
