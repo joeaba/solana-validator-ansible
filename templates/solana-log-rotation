@@ -1,0 +1,8 @@
+{{ solana_logs_location }}/solana-validator.log {
+  daily
+  rotate 7
+  missingok
+  postrotate
+    systemctl kill -s USR1 solana-validator.service
+  endscript
+}

@@ -1,0 +1,8 @@
+---
+
+- name: create log directory
+  file:
+    path: /solana/log/
+    state: directory
+    owner: solana
+    group: solana

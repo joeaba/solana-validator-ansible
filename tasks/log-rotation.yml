@@ -1,0 +1,12 @@
+---
+
+- name: setup logrotation
+  template:
+    src: solana-log-rotation
+    dest: /etc/logrotate.d/solana
+  when: "ansible_service_mgr == 'systemd'" 
+            
+- name: restart service
+  service:
+    name: logrotate
+    state: restarted
