@@ -45,7 +45,7 @@ These are the basic variables that configure the setup of the validators. They h
 | `solana_public_key` | `/home/solana/identity.json` | Location of the identity of the validator node. |
 | `solana_network` | mainnet | The solana network that this node is supposed to be part of |
 | `solana_environment` | see defaults/main.yml | Environment variables to specify for the validator node, most importantly `RUST_LOG` |
-| `solana_enabled_services` | `[ solana-rpc ]`  | List of services to start automatically on boot |
+| `solana_enabled_services` | `[ solana-validator ]`  | List of services to start automatically on boot |
 | `solana_disabled_services` | `[ ]` | List of services to set as disabled |
 | `solana_gossip_port` | 8001 | Port for gossip traffic (needs to be open publicly in firewall) |
 | `solana_rpc_port` | 8899 | Port for incoming RPC. This is typically only open on localhost. Place a proxy like `haproxy` in front of this port. |
