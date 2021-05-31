@@ -22,7 +22,7 @@ exec /home/solana/.local/share/solana/install/active_release/bin/solana-validato
 {% if solana_snapshot_compression is defined %}
   --snapshot-compression {{ solana_snapshot_compression }} \
 {% endif %}
-  --log {{ solana_log_location }}/solana-validator.log \
+  --log {{ solana_logs_location }}/solana-validator.log \
   --gossip-port {{ solana_gossip_port }} \
   --rpc-port {{ solana_rpc_port }} \
   --dynamic-port-range {{ solana_dynamic_port_range }} \
