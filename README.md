@@ -1,10 +1,24 @@
-Solana RPC role
-=========
+# Setting up a Solana RPC node with Ansible
+
+ 1. [Introduction](#solana-ansible-rpc-role)
+ 2. [Hardware Requirements](#hardware-requirements)
+ 3. [Software Requirements](#software-requirements)
+ 4. [Role Variables](#role-variables)
+ 5. [Basic variables](#basic-variables)
+ 6. [Network Specific Variables](#network-specific-variables)
+ 7. [RPC Specific Variables](#rpc-specific-variables)
+ 8. [Performance Variables](#performance-variables)
+ 9. [Bigtable](#bigtable)
+ 10. [Handling Forks](#handling-forks)
+ 11. [CPU Governor & Sysctl Settings](#cpu-governor-and-sysctl-settings)
+ 12. [Example Playbooks](#example-playbooks)
+ 13. [Running the RPC Node](#running-the-rpc-node)
+
+## Solana Ansible RPC Role
 
 An Ansible role to deploy a Solana RPC node. This configures the validator software in RPC mode running under the user `solana`. The RPC service is installed as a user service running under this same user. 
 
-Hardware Requirements
-------------
+## Hardware Requirements
 
 An RPC server requires _at least_ the same specs as a Solana validator, but typically has higher requirements. In particular, we recommend using 256 GB of RAM in order to store indexes. For more information about hardware requirements, please see [https://docs.solana.com/running-validator/validator-reqs](https://docs.solana.com/running-validator/validator-reqs).
 
@@ -15,22 +29,20 @@ Before deploy you should prepare the host so that the directory that you use for
 /solana/ledger - a 2 TB NVME drive to hold ledger
 ```
 
-Software Requirements
-------------
+## Software Requirements
 
  * Ansible >= 2.7 (tested primarily on Ansible 2.8)
  * Ubuntu 18.04+ on the target deployment machine 
 
 This role assumes some familiarity with the Solana validator software deployment process.
 
-Role Variables
---------------
+## Role Variables
 
 The deploy ensures that the checksum for the version of solana-installer that you are downloading matches one given in `vars/main.yml`. In case you want to insatll a solana version not listed there, it is good if you first download and check the sha256 checksum of the solana-installer script (https://raw.githubusercontent.com/solana-labs/solana/install/solana-install-init.sh).
 
 There are a large number of configurable parameters for Solana. Many of these have workable defaults, and you can use this role to deploy a Solana RPC node without changing any of the default values and you should be able to have a decent experience. If you run this role without specifying any parameters, it'll configure a standard `mainnet` RPC node. 
 
-### Basic variables
+### Basic Variables
 
 These are the basic variables that configure the setup of the validators. They have default values but you probably want to customise them based on your setup.
 
@@ -51,7 +63,7 @@ These are the basic variables that configure the setup of the validators. They h
 | `solana_rpc_port` | 8899 | Port for incoming RPC. This is typically only open on localhost. Place a proxy like `haproxy` in front of this port. |
 | `solana_dynamic_port_range` | 8002-8012 | Port for incoming solana traffic. Needs to be open publicly in firewall. |
 
-### Network specific variables
+### Network Specific Variables
 
 Default values for these variables are specified in `vars/{{ solana_network }}-default.yml` (e.g. `vars/mainnet-default.yml`). You can also specify your own by providing the file `{{ solana_network }}.yml`. You will need to specify all these variables unless you rely on the defaults.
 
@@ -66,7 +78,7 @@ Default values for these variables are specified in `vars/{{ solana_network }}-d
 | `solana_expected_shred_version` | see vars/mainnet-default.yml | Expected shred version |
 | `solana_index_exclude_keys` | see vars/mainnet-default.yml | Keys to exclude from indexes for performance reasons |
 
-### RPC specific variables
+### RPC Specific Variables
 
 | Name                 | Default value        | Description                |
 |----------------------|----------------------|----------------------------|
@@ -74,7 +86,7 @@ Default values for these variables are specified in `vars/{{ solana_network }}-d
 | `solana_rpc_history` | true | Whether to provide historical values over RPC |
 | `solana_account_index` | program-id spl-token-owner spl-token-mint | Which indexes to enable. These greatly improve performance but slows down start up time and can increase memory requirements. |
 
-### Performance variables
+### Performance Variables
 
 These are variables you can tweak to improve performance
 
@@ -105,7 +117,7 @@ You can specify Google Bigtable account credentials for querying blocks not pres
 | `solana_bigtable_client_x509_cert_url` | | Bigtable cert url  |
 
 
-## Handling forks
+## Handling Forks
 
 Occasionally devnet/testnet will experience forks. In these cases use the following parameters as instructed in Discord:
 
@@ -114,7 +126,7 @@ Occasionally devnet/testnet will experience forks. In these cases use the follow
 | `solana_hard_fork` |  | Hard fork |
 | `solana_wait_for_supermajority` |  | Whether node should wait for supermajority or not |
 
-## CPU governor & Sysctl settings
+## CPU Governor and Sysctl Settings
 
 There are certain configurations that you need to do to get your RPC node running properly. This role can help you make some of these standard config changes. However, full optmisation depends greatly on your hardware so you need to take time to be familiar with how to configure your hardware right.
 
@@ -164,8 +176,7 @@ sysctl_optimisations:
   net.core.wmem_default: 134217728
 ```
 
-Example Playbooks
------------------
+## Example Playbooks
 
 Mainnet node:
 
@@ -199,8 +210,7 @@ Devnet node:
 
 
 
-Running the RPC node
---------------------
+## Running the RPC Node
 
 After the deploy you can login to the machine and run `su -l solana` to become the solana user. 
 
@@ -214,8 +224,7 @@ Finally, to see logs for your Solana RPC node run `journalctl --user -u solana-r
 
 If this is your first time running a Solana node, you can find more details about how to operate the node on [https://docs.solana.com/running-validator/validator-start](https://docs.solana.com/running-validator/validator-start) and [https://github.com/agjell/sol-tutorials/](https://github.com/agjell/sol-tutorials/). 
 
-License
--------
+## License
 
 MIT
 
