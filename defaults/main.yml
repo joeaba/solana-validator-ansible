@@ -17,7 +17,6 @@ solana_installer_version: v1.6.10
 solana_version: stable
 solana_root: /solana
 solana_ledger_location: /home/solana/ledger
-solana_accounts_location: /solana/ledger/accounts
 solana_authorized_voters: []
 solana_frozen_accounts: []
 solana_rpc_history: true
