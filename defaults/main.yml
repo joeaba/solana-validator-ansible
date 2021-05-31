@@ -39,7 +39,7 @@ solana_account_index: program-id spl-token-owner spl-token-mint
 solana_bigtable_enabled: false
 solana_network: mainnet
 solana_enabled_services:
-  - solana-rpc
+  - solana-validator
 solana_disabled_services: []
 
 # Setup log rotation
