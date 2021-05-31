@@ -42,7 +42,7 @@ solana_disabled_services: []
 
 # Setup logs
 log_rotation: true
-solana_logs_location: /home/solana/log/
+solana_logs_location: /home/solana/log
 
 # solana_metrics_config
 # solana_pubsub_max_connections
