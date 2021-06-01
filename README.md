@@ -204,8 +204,6 @@ Devnet node:
          - { role: solana.solana-validator, solana_network: devnet }
 ```
 
-
-
 ## Running the RPC Node
 
 After the deploy you can login to the machine and run `su -l solana` to become the solana user. 
@@ -215,10 +213,6 @@ To see the Solana validator command line generated for you during the deploy you
 For the first start up, you should comment out `--no-genesis-fetch` and `--no-snapshot-fetch` in the file `/home/solana/bin/solana-rpc.sh`. This will allow you node to download the basic files it requires for first time start up. Remember to activate these lines again after you have started the validator for the first time or it'll keep downloading the files on every restart.
 
 Then start up the Solana RPC process by running `systemctl --user start solana-validator`. You can see status of the process by running `systemctl --user status solana-validator`. The first start up will take some time. You can monitor start up by running `solana catchup --our-localhost`.
-
-Finally, to see logs for your Solana RPC node run `journalctl --user -u solana-rpc -f`.
-
-If this is your first time running a Solana node, you can find more details about how to operate the node on [https://docs.solana.com/running-validator/validator-start](https://docs.solana.com/running-validator/validator-start) and [https://github.com/agjell/sol-tutorials/](https://github.com/agjell/sol-tutorials/). 
 
 ## License
 
