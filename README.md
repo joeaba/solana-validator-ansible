@@ -20,27 +20,20 @@ An Ansible role to deploy a Solana RPC node. This configures the validator softw
 
 ## Hardware Requirements
 
-An RPC server requires _at least_ the same specs as a Solana validator, but typically has higher requirements. In particular, we recommend using 256 GB of RAM in order to store indexes. For more information about hardware requirements, please see [https://docs.solana.com/running-validator/validator-reqs](https://docs.solana.com/running-validator/validator-reqs).
-
-Before deploy you should prepare the host so that the directory that you use for your Accounts database and your Ledger location are properly configured. This can include setting up a tmpfs folder for accounts and a separate filesystem (ideally on an NVME drive) for the ledger. A common way to configure this might be:
-
-```
-/solana/tmpfs - a 100 GB tmpfs partition to hold accounts state
-/solana/ledger - a 2 TB NVME drive to hold ledger
-```
+A Solana RPC server requires _at least_ the same specs as a Solana validator node, but depending on the usage it should have higher requirements. We recommend using at least a 16 cores, 32 threads CPU with 2.8 GHz clock base, 256 GB of RAM in order to store indexes and 2 TB NVMe to store the Ledger. For more information about hardware requirements, please see [https://docs.solana.com/running-validator/validator-reqs](https://docs.solana.com/running-validator/validator-reqs).
 
 ## Software Requirements
 
- * Ansible >= 2.7 (tested primarily on Ansible 2.8)
+ * Ansible >= 2.8
  * Ubuntu 18.04+ on the target deployment machine 
 
 This role assumes some familiarity with the Solana validator software deployment process.
 
 ## Role Variables
 
-The deploy ensures that the checksum for the version of solana-installer that you are downloading matches one given in `vars/main.yml`. In case you want to insatll a solana version not listed there, it is good if you first download and check the sha256 checksum of the solana-installer script (https://raw.githubusercontent.com/solana-labs/solana/install/solana-install-init.sh).
+The deploy ensures that the checksum for the version of solana-installer that you are downloading matches one given in `vars/main.yml`. In case you want to install a solana version not listed there, it is good if you first download and check the sha256 checksum of the solana-installer script (https://raw.githubusercontent.com/solana-labs/solana/install/solana-install-init.sh).
 
-There are a large number of configurable parameters for Solana. Many of these have workable defaults, and you can use this role to deploy a Solana RPC node without changing any of the default values and you should be able to have a decent experience. If you run this role without specifying any parameters, it'll configure a standard `mainnet` RPC node. 
+There are a large number of configurable parameters for Solana. Many of these have workable defaults, and you can use this role to deploy a Solana RPC node without changing any of the default values. If you run this role without specifying any parameters, it'll configure a standard `mainnet` RPC node. 
 
 ### Basic Variables
 
@@ -50,8 +43,9 @@ These are the basic variables that configure the setup of the validators. They h
 |----------------------|----------------------|----------------------------|
 | `solana_version` | stable | The solana version to install. |
 | `solana_root`        | /solana              | Main directory for solana ledger and accounts |
-| `solana_ledger_location` | /solana/ledger | Storage for solana ledger (should be on NVME) |
-| `solana_accounts_location` | /solana/ledger/accounts | Storage for solana accounts information. In case you use tmpfs for accounts this should be a subdirectory of your tmpfs mount point (e.g. `/solana/tmpfs/accounts` in case tmpfs is mounted on `/solana/tmpfs` |
+| `solana_ledger_location` | /home/solana/ledger | Storage for solana ledger (should be on NVME) |
+| `solana_accounts_location` | /mnt/accounts | Tmpfs location for solana accounts information. |
+| `solana_tmpfs_size` | 300G | Tmpfs size. |
 | `solana_keypairs` | `[]` | List of keypairs to copy to the validator node. Each entry in the list should have a `key` and `name` entry. This will create `/home/solana/<name>.json` containing the value of `key`. |
 | `solana_generate_keypair` | true | Whether or not to generate a keypair. If you haven't specified `solana_keypairs` and you set this to true, a new key will be generated and placed in /home/solana/identity.json |
 | `solana_public_key` | `/home/solana/identity.json` | Location of the identity of the validator node. |
@@ -62,6 +56,8 @@ These are the basic variables that configure the setup of the validators. They h
 | `solana_gossip_port` | 8001 | Port for gossip traffic (needs to be open publicly in firewall) |
 | `solana_rpc_port` | 8899 | Port for incoming RPC. This is typically only open on localhost. Place a proxy like `haproxy` in front of this port. |
 | `solana_dynamic_port_range` | 8002-8012 | Port for incoming solana traffic. Needs to be open publicly in firewall. |
+| `log_rotation` | true | Sets up daily log rotation for 7 days |
+| `solana_logs_location` | /home/solana/log | Solana logs location. |
 
 ### Network Specific Variables
 
@@ -130,11 +126,11 @@ Occasionally devnet/testnet will experience forks. In these cases use the follow
 
 There are certain configurations that you need to do to get your RPC node running properly. This role can help you make some of these standard config changes. However, full optmisation depends greatly on your hardware so you need to take time to be familiar with how to configure your hardware right.
 
-However, the most important element of optimisation is the CPU performance governor. This controls boost behaviour and energy usage. On many hosts in DCs they are configured for balance between performance and energy usage. In the case of Solana we really need them to perform at their fastest. To set the servers CPU governor there are three options:
+The most important element of optimisation is the CPU performance governor. This controls boost behaviour and energy usage. On many hosts in DCs they are configured for balance between performance and energy usage. To set the servers CPU governor there are three options:
 	
- 1. You have access to BIOS and you set the BIOS cpu setting to `max performance`. This seems to work well for HPE systems. In this case, specify the variable `cpu_governor: bios`. This is sometimes required for AMD EPYC systems too.
+ 1. You have access to BIOS and you set the BIOS cpu setting to `max performance`. This works well for HPE systems. In this case, specify the variable `cpu_governor: bios`. This is sometimes required for AMD EPYC systems too.
  2. You have acccess to BIOS and you set the BIOS cpu setting to `os control`. This should be the typical default. In this case you can leave the `cpu_governor` variable as default or set it explicitly to `cpu_governor: performance`.
- 3. You don't have access to BIOS or CPU governor settings. If possible, try to set `cpu_governor: performance`. Otherwise, hopefully your provider has configured it for good performance!
+ 3. You don't have access to BIOS or CPU governor settings. If possible, try to set `cpu_governor: performance`. Otherwise, hopefully your provider has configured it for good performance.
 
 The second config you need to do is to edit various kernel parameters to fit the Solana RPC use case.
 
@@ -143,7 +139,7 @@ One option is to deploy `solana-sys-tuner` together with this config to autotune
 A second option, especially if you are new to tuning performance is `tuned` and `tune-adm` from RedHat, where the `throughput-performance` profile is suitable. 
 
 Finally, if you deploy through this role you can also specify a list of sysctl values for this playbook to automatically set up on your host. This allows full control and sets them so that they are permanently configured.
-Here is a list of sysctl values that we have used on rpcpool:
+Here is a list of sysctl values that might help:
 
 ```
 sysctl_optimisations:
@@ -214,11 +210,11 @@ Devnet node:
 
 After the deploy you can login to the machine and run `su -l solana` to become the solana user. 
 
-To see the Solana validator command line generated for you during the deploy you can take a look at `/home/solana/bin/solana-rpc.sh`. Remember that any changes to this file will be overwritten next time you run this Ansible.
+To see the Solana validator command line generated for you during the deploy you can take a look at `/home/solana/bin/solana-validator.sh`. Remember that any changes to this file will be overwritten next time you run the playbook.
 
-For the first start up, you should comment out `--no-genesis-fetch` and `--no-snapshot-fetch` in the file `/home/solana/bin/solana-rpc.sh`. This will allow solana to download the basic files it requires for first time start up. Remember to activate these lines again after you have started the validator for the first time.
+For the first start up, you should comment out `--no-genesis-fetch` and `--no-snapshot-fetch` in the file `/home/solana/bin/solana-rpc.sh`. This will allow you node to download the basic files it requires for first time start up. Remember to activate these lines again after you have started the validator for the first time or it'll keep downloading the files on every restart.
 
-Then start up the solana RPC process by running `systemctl --user start solana-rpc`. You can see status of the process by running `systemctl --user status solana-rpc`. The first start up will take some time. You can monitor start up by running `solana catchup --our-localhost`.
+Then start up the Solana RPC process by running `systemctl --user start solana-validator`. You can see status of the process by running `systemctl --user status solana-validator`. The first start up will take some time. You can monitor start up by running `solana catchup --our-localhost`.
 
 Finally, to see logs for your Solana RPC node run `journalctl --user -u solana-rpc -f`.
 
