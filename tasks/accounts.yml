@@ -5,7 +5,6 @@
     dest: "{{ solana_accounts_location }}"
     owner: solana
     group: solana
-    mode: "01777"
     state: directory
 
 - name: mount accounts tmpfs
