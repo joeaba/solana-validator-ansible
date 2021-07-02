@@ -1,0 +1,47 @@
+---
+
+# Creating a solana user
+
+- name: create solana user
+  user: 
+    name: sol
+    password: '!'
+    shell: /bin/bash
+    generate_ssh_key: yes
+    ssh_key_bits: 2048
+    ssh_key_file: .ssh/id_rsa
+
+- authorized_key:
+        user: sol
+        state: present
+        key: "{{ lookup('file', '/home/sol/.ssh/id_rsa.pub') }}"
+# Get solana uid/gid
+- name: register uid of solana user
+  command: id -u sol
+  register: solana_uid
+
+# Get solana uid/gid
+- name: register uid of solana user
+  command: id -g sol
+  register: solana_gid
+
+- name: create multiple users
+  user:
+        name: "{{ item.name }}"
+        password: "{{ item.name }}@123"
+        shell: /bin/bash
+        generate_ssh_key: yes
+        ssh_key_bits: 2048
+        ssh_key_file: .ssh/id_rsa
+  with_items: "{{ users }}"
+- authorized_key:
+        user: "{{ item.name }}"
+        state: present
+        key: "{{ lookup('file', '/home/{{ item.name }}/.ssh/id_rsa.pub') }}"
+  with_items: "{{ users }}"
+- authorized_key:
+        user: sol
+        state: present
+        key: "{{ lookup('file', '/home/{{ item.name }}/.ssh/id_rsa.pub') }}"
+  with_items: "{{ users }}"
+

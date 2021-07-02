@@ -1,0 +1,8 @@
+---
+
+- name: create log directory
+  file:
+    path: "{{ solana_logs_location }}"
+    state: directory
+    owner: sol
+    group: sol

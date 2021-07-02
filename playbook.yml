@@ -1,0 +1,5 @@
+- hosts: solana_rpc_nodes
+  become: true
+  become_method: sudo
+  roles:
+       - { role: solana.solana-validator, solana_network: mainnet }
