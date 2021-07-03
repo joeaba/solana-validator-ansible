@@ -1,67 +1,38 @@
 ---
+- name: install UFW firewall
+  apt:
+          name: ufw
+          state: present
 
+- name: enable UFW service
+  systemd:
+          daemon_reload: true
+          name: ufw
+          enabled: yes
 
 - name: Allow specific traffic
-  ansible.builtin.iptables:
-          chain: INPUT
-          protocol: "{{ item.protocol }}"
-          destination_port: "{{ item.port }}"
-          source: "{{ item.sourceip }}"
-          jump: ACCEPT
+  community.general.ufw:
+          rule: allow
+          proto: "{{ item.protocol }}"
+          port: "{{ item.port }}"
+          src: "{{ item.sourceip }}"
   with_items:
           - {'protocol':'tcp','port':'22','sourceip':'0.0.0.0'}
           - {'protocol':'tcp','port':'80','sourceip':'0.0.0.0'}
           - {'protocol':'tcp','port':'443','sourceip':'0.0.0.0'}
           - {'protocol':'tcp','port':'8080','sourceip':'0.0.0.0'}
           - {'protocol':'tcp','port':'8443','sourceip':'0.0.0.0'}
-          - {'protocol':'tcp','port':'8001','sourceip':'0.0.0.0'}
-          - {'protocol':'tcp','port':'8002','sourceip':'0.0.0.0'}
-          - {'protocol':'udp','port':'8001','sourceip':'0.0.0.0'}
-          - {'protocol':'udp','port':'8002','sourceip':'0.0.0.0'}
-          - {'protocol':'tcp','port':'8003','sourceip':'0.0.0.0'}
-          - {'protocol':'tcp','port':'8004','sourceip':'0.0.0.0'}
-          - {'protocol':'tcp','port':'8005','sourceip':'0.0.0.0'}
-          - {'protocol':'tcp','port':'8006','sourceip':'0.0.0.0'}
-          - {'protocol':'tcp','port':'8007','sourceip':'0.0.0.0'}
-          - {'protocol':'tcp','port':'8008','sourceip':'0.0.0.0'}
-          - {'protocol':'tcp','port':'8009','sourceip':'0.0.0.0'}
-          - {'protocol':'tcp','port':'8010','sourceip':'0.0.0.0'}
-          - {'protocol':'tcp','port':'8011','sourceip':'0.0.0.0'}
-          - {'protocol':'tcp','port':'8012','sourceip':'0.0.0.0'}
+          - {'protocol':'tcp','port':'8001:8012','sourceip':'0.0.0.0'}
+          - {'protocol':'udp','port':'8001:8002','sourceip':'0.0.0.0'}
           - {'protocol':'udp','port':'8086','sourceip':'0.0.0.0'}
           - {'protocol':'tcp','port':'8086','sourceip':'0.0.0.0'}
-          - {'protocol':'tcp','port':'9100','sourceip':'192.34.59.90'}
-          - {'protocol':'tcp','port':'9101','sourceip':'192.34.59.90'}
-          - {'protocol':'tcp','port':'9102','sourceip':'192.34.59.90'}
-          - {'protocol':'tcp','port':'9103','sourceip':'192.34.59.90'}
-          - {'protocol':'tcp','port':'9104','sourceip':'192.34.59.90'}
-          - {'protocol':'tcp','port':'9105','sourceip':'192.34.59.90'}
-          - {'protocol':'tcp','port':'9106','sourceip':'192.34.59.90'}
-          - {'protocol':'tcp','port':'9107','sourceip':'192.34.59.90'}
-          - {'protocol':'tcp','port':'9100','sourceip':'37.152.10.220'}
-          - {'protocol':'tcp','port':'9101','sourceip':'37.152.10.220'}
-          - {'protocol':'tcp','port':'9102','sourceip':'37.152.10.220'}
-          - {'protocol':'tcp','port':'9103','sourceip':'37.152.10.220'}
-          - {'protocol':'tcp','port':'9104','sourceip':'37.152.10.220'}
-          - {'protocol':'tcp','port':'9105','sourceip':'37.152.10.220'}
-          - {'protocol':'tcp','port':'9106','sourceip':'37.152.10.220'}
-          - {'protocol':'tcp','port':'9107','sourceip':'37.152.10.220'}
-          - {'protocol':'tcp','port':'9100','sourceip':'34.82.168.48'}
-          - {'protocol':'tcp','port':'9101','sourceip':'34.82.168.48'}
-          - {'protocol':'tcp','port':'9102','sourceip':'34.82.168.48'}
-          - {'protocol':'tcp','port':'9103','sourceip':'34.82.168.48'}
-          - {'protocol':'tcp','port':'9104','sourceip':'34.82.168.48'}
-          - {'protocol':'tcp','port':'9105','sourceip':'34.82.168.48'}
-          - {'protocol':'tcp','port':'9106','sourceip':'34.82.168.48'}
-          - {'protocol':'tcp','port':'9107','sourceip':'34.82.168.48'}
-          - {'protocol':'tcp','port':'9100','sourceip':'64.227.74.5'}
-          - {'protocol':'tcp','port':'9101','sourceip':'64.227.74.5'}
-          - {'protocol':'tcp','port':'9102','sourceip':'64.227.74.5'}
-          - {'protocol':'tcp','port':'9103','sourceip':'64.227.74.5'}
-          - {'protocol':'tcp','port':'9104','sourceip':'64.227.74.5'}
-          - {'protocol':'tcp','port':'9105','sourceip':'64.227.74.5'}
-          - {'protocol':'tcp','port':'9106','sourceip':'64.227.74.5'}
-          - {'protocol':'tcp','port':'9107','sourceip':'64.227.74.5'}
+          - {'protocol':'tcp','port':'9100:9107','sourceip':'192.34.59.90'}
+          - {'protocol':'tcp','port':'9100:9107','sourceip':'37.152.10.220'}
+          - {'protocol':'tcp','port':'9100:9107','sourceip':'34.82.168.48'}
+          - {'protocol':'tcp','port':'9100:9107','sourceip':'64.227.74.5'}
           - {'protocol':'tcp','port':'8899','sourceip':'37.152.10.220'}
           - {'protocol':'tcp','port':'8899','sourceip':'95.217.114.213'}
 
+- name: Enable UFW
+  community.general.ufw:
+          state: enabled
