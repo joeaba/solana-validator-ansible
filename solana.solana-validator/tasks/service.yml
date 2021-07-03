@@ -69,23 +69,22 @@
 - name: "install {{ item }} service"
   template:
     src: "{{ item }}.service"
-    dest: "/home/sol/.config/systemd/user/{{ item }}.service"
-    owner: sol
-    group: sol
-    mode: 0644
+    dest: "/etc/systemd/system/{{ item }}.service"
+    mode: 0777
   with_items:
-    - solana-validator
+    - sol
+    - solana-sys-tuner
 
 - name: setup services
   systemd:
     daemon_reload: true
     name: "{{ item }}"
     enabled: yes
-    scope: user
-  become: true
-  become_user: sol
-  environment:
-    XDG_RUNTIME_DIR: "/run/user/{{ solana_uid.stdout }}"
+    # scope: user
+    #become: true
+  #become_user: root
+  #  environment:
+  # XDG_RUNTIME_DIR: "/run/user/{{ solana_uid.stdout }}"
   with_items: "{{ solana_enabled_services }}"
 
 - name: setup services (disabled)
@@ -94,8 +93,8 @@
     name: "{{ item }}"
     enabled: no
     scope: user
-  become: true
-  become_user: sol
+    #become: true
+    #become_user: sol
   environment:
     XDG_RUNTIME_DIR: "/run/user/{{ solana_uid.stdout }}"
   with_items: "{{ solana_disabled_services }}"

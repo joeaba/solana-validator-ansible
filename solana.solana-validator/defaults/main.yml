@@ -37,14 +37,13 @@ solana_account_index: program-id spl-token-owner spl-token-mint
 solana_bigtable_enabled: false
 solana_network: mainnet
 solana_enabled_services:
-  - solana-validator
+  - sol
+  - solana-sys-tuner
 solana_disabled_services: []
 
 # Setup logs
 log_rotation: true
 solana_logs_location: /home/sol/log
-ssh_users:
-        -name: joe
 
 # solana_metrics_config
 # solana_pubsub_max_connections

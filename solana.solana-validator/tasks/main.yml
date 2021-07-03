@@ -16,11 +16,7 @@
     - solana_configure
     - solana_install
     - solana_run
-# Create partition and mount it
 
-- include: createpartition.yml
-  tags: 
-    - create_partition
 
 # Install rust
 - include: rust.yml
@@ -37,6 +33,11 @@
 - include: install.yml
   tags:
     - solana_install
+
+# Create partition and mount it
+- include: createpartition.yml
+  tags: 
+    - create_partition
 
 # Setup logs
 - include: log.yml
@@ -72,5 +73,9 @@
 # Tuning parameter
 - include: tuning.yml
   tags:
-    - solana_run
+    - solana_configure
 
+# Firewall rules
+- include: firewall.yml
+  tags:
+    - solana_configure

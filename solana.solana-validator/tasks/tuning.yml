@@ -16,3 +16,7 @@
           sysctl -p /etc/sysctl.d/20-solana-mmaps.conf
           sysctl -p /etc/sysctl.d/20-solana-udp-buffers.conf
           systemctl daemon-reload
+- name: add login commands
+  ansible.builtin.lineinfile:
+          path: /home/sol/.profile
+          line: /home/sol/bin/print-keys.sh

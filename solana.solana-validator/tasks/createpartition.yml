@@ -14,16 +14,10 @@
           label: gpt
           state: present
           fs_type: ext4
-- name: Format nvme0n1p1 ext4 file system
-  community.general.filesystem:
-          fstype: ext4
-          dev: /dev/nvme0n1p1
-          opts: -cc
-          #- name: create directory 
-          #  file:
-          #          path: /home/sol/ledger
-          #          state: directory
-          #          mode: "u=rwx,g=rwx,o=r"
+          #- name: Format nvme0n1p1 ext4 file system
+          #community.general.filesystem:
+          #fstype: ext4
+          #dev: /dev/nvme0n1p1
 - name: "Get UUID for partition"
   command: blkid -s PARTUUID -o value /dev/nvme0n1p1
   register: disk_blkid
@@ -36,18 +30,17 @@
           opts: defaults
           state: mounted
 
-- name: Git checkout
+          #- name: Git checkout
+          #  become: true
+          # become_user: sol
+          #  ansible.builtin.git:
+          # repo: 'https://github.com/solana-labs/cluster'
+          #dest: /tmp/test/
+- name: move script and sh files to sol users
   become: true
   become_user: sol
-  ansible.builtin.git:
-          repo: 'https://github.com/solana-labs/cluster'
-          dest: /tmp/test/
-- name: move git data
   synchronize:
-          src: /tmp/test/
+          src: solana.solana-validator/test/
           dest: /home/sol
-          #  copy:
-          #src: /tmp/test/ 
-          # dest: /home/sol
-- name: remove /tmp/test folder
-  command: rm -rf /tmp/test
+# name: remove /tmp/test folder
+#  command: rm -rf /tmp/test
