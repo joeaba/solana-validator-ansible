@@ -1,0 +1,21 @@
+[Unit]
+Description=Solana Validator
+After=network.target
+StartLimitIntervalSec=0
+
+[Service]
+Type=simple
+Restart=always
+RestartSec=1
+
+EnvironmentFile=/home/sol/solana-validator.env
+
+ExecStart=/home/sol/bin/solana-validator.sh
+
+LimitNOFILE={{ solana_limit_nofile|default(700000) }}
+LimitNPROC={{ solana_limit_nproc|default(700000) }}
+
+WorkingDirectory=/home/sol/
+
+[Install]
+WantedBy=default.target

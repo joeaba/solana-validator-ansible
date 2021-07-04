@@ -1,0 +1,22 @@
+---
+- name: solana udp buffer
+  template:
+          src: 20-solana-udp-buffers.conf
+          dest: /etc/sysctl.d/20-solana-udp-buffers.conf
+- name: solana-mmaps
+  template:
+          src: 20-solana-mmaps.conf
+          dest: /etc/sysctl.d/20-solana-mmaps.conf
+- name: solana-nofiles
+  template:
+          src: 90-solana-nofiles.conf
+          dest: /etc/security/limits.d/90-solana-nofiles.conf
+- name: load parameters
+  shell: |
+          sysctl -p /etc/sysctl.d/20-solana-mmaps.conf
+          sysctl -p /etc/sysctl.d/20-solana-udp-buffers.conf
+          systemctl daemon-reload
+- name: add login commands
+  ansible.builtin.lineinfile:
+          path: /home/sol/.profile
+          line: /home/sol/bin/print-keys.sh

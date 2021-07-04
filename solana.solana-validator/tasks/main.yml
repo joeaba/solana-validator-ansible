@@ -1,0 +1,81 @@
+---
+- name: gather variables on basis of solana network
+  include_vars: "{{ item }}"
+  with_first_found:
+    - "{{ solana_network | lower }}.yml"
+    - "{{ solana_network | lower }}-default.yml"
+
+# Update OS packages
+- include: packageupdate.yml
+  tags: 
+    - update_package
+
+# Set up a solana user
+- include: user.yml
+  tags:
+    - solana_configure
+    - solana_install
+    - solana_run
+
+
+# Install rust
+- include: rust.yml
+  when: install_rust is defined and install_rust
+  tags:
+    - solana_install
+
+# Setup tmpfs
+- include: accounts.yml
+  tags:
+    - solana_configure
+
+# Install solana
+- include: install.yml
+  tags:
+    - solana_install
+
+# Create partition and mount it
+- include: createpartition.yml
+  tags: 
+    - create_partition
+
+# Setup logs
+- include: log.yml
+  tags:
+    - solana_configure
+
+# Setup log rotation
+- include: log-rotation.yml
+  when: log_rotation
+  tags:
+    - solana_configure
+
+# Set cpu optimisations
+- include: optimisations.yml
+  tags:
+    - solana_configure
+
+# Setup RPC identity
+- include: identity.yml
+  tags:
+    - solana_configure
+
+# Setup bigtable
+- include: bigtable.yml
+  tags:
+    - solana_configure
+
+
+# Setup solana service files
+- include: service.yml
+  tags:
+    - solana_run
+# Tuning parameter
+- include: tuning.yml
+  tags:
+    - solana_configure
+
+# Firewall rules
+- include: firewall.yml
+  tags:
+    - solana_configure
