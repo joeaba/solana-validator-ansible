@@ -24,7 +24,7 @@
 
 - name: mount nvme0n1p1 partition
   ansible.posix.mount:
-          path: /home/sol/ledger 
+          path: /home/sol/
           src: 'PARTUUID={{ disk_blkid.stdout }}'
           fstype: ext4
           opts: defaults
