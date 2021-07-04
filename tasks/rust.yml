@@ -27,11 +27,11 @@
 - name: install rustfmt
   command: rustup component add rustfmt
   args:
-    chdir: /home/solana/
+    chdir: /home/sol/
   environment:
-    PATH: /bin:/usr/bin:/usr/local/bin:/home/solana/.cargo/bin
+    PATH: /bin:/usr/bin:/usr/local/bin:/home/sol/.cargo/bin
   become: true
-  become_user: solana
+  become_user: sol
   register: rustup_output
 
 - name: debug

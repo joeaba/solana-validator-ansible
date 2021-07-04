@@ -17,6 +17,10 @@
     - solana_install
     - solana_run
 
+# Create partition and mount it
+- include: createpartition.yml
+  tags: 
+    - solana_install
 
 # Install rust
 - include: rust.yml
@@ -34,10 +38,6 @@
   tags:
     - solana_install
 
-# Create partition and mount it
-- include: createpartition.yml
-  tags: 
-    - create_partition
 
 # Setup logs
 - include: log.yml

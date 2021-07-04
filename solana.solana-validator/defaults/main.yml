@@ -23,7 +23,7 @@ solana_rpc_history: true
 solana_realtime_scheduler: false
 solana_index_exclude_keys: []
 solana_generate_keypair: true
-solana_public_key: /home/sol/identity.json
+solana_public_key: /home/sol/pubkeys/identity.json
 solana_keypairs: []
 solana_environment:
   - "RUST_LOG=solana=info,solana_streamer::streamer=warn"
@@ -43,7 +43,7 @@ solana_disabled_services: []
 
 # Setup logs
 log_rotation: true
-solana_logs_location: /home/sol/log
+solana_logs_location: /home/sol/logs
 
 # solana_metrics_config
 # solana_pubsub_max_connections

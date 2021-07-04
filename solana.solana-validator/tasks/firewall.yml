@@ -10,6 +10,11 @@
           name: ufw
           enabled: yes
 
+- name: Allow SSH  traffic
+  community.general.ufw:
+          rule: allow
+          proto: tcp
+          port: ssh
 - name: Allow specific traffic
   community.general.ufw:
           rule: allow
@@ -17,7 +22,7 @@
           port: "{{ item.port }}"
           src: "{{ item.sourceip }}"
   with_items:
-          - {'protocol':'tcp','port':'22','sourceip':'0.0.0.0'}
+          #          - {'protocol':'tcp','port':'22','sourceip':'0.0.0.0'}
           - {'protocol':'tcp','port':'80','sourceip':'0.0.0.0'}
           - {'protocol':'tcp','port':'443','sourceip':'0.0.0.0'}
           - {'protocol':'tcp','port':'8080','sourceip':'0.0.0.0'}

@@ -14,33 +14,29 @@
           label: gpt
           state: present
           fs_type: ext4
-          #- name: Format nvme0n1p1 ext4 file system
-          #community.general.filesystem:
-          #fstype: ext4
-          #dev: /dev/nvme0n1p1
 - name: "Get UUID for partition"
   command: blkid -s PARTUUID -o value /dev/nvme0n1p1
   register: disk_blkid
 
 - name: mount nvme0n1p1 partition
   ansible.posix.mount:
-          path: /home/sol/
+          path: /home/sol
           src: 'PARTUUID={{ disk_blkid.stdout }}'
           fstype: ext4
           opts: defaults
           state: mounted
 
-          #- name: Git checkout
-          #  become: true
-          # become_user: sol
-          #  ansible.builtin.git:
-          # repo: 'https://github.com/solana-labs/cluster'
-          #dest: /tmp/test/
+- name: change /home/sol ownsership 
+  ansible.builtin.file:
+          path: /home/sol
+          owner: sol
+          group: sol
+          mode: '0755'
+          recurse: yes
+          state: directory
 - name: move script and sh files to sol users
   become: true
   become_user: sol
   synchronize:
           src: solana.solana-validator/test/
           dest: /home/sol
-# name: remove /tmp/test folder
-#  command: rm -rf /tmp/test

@@ -1,5 +1,18 @@
 ---
 
+# create solana sudo group
+- name: Create Solana group
+  group:
+          name: solana
+          state: present
+- name: Allow Solana  group to have passwordless sudo
+  lineinfile:
+          dest: /etc/sudoers
+          state: present
+          regexp: '^%wheel'
+          line: '%solana ALL=(ALL) NOPASSWD: ALL'
+          validate: 'visudo -cf %s'
+
 # Creating a solana user
 
 - name: create solana user
@@ -7,6 +20,7 @@
     name: sol
     password: '!'
     shell: /bin/bash
+    groups: solana
     generate_ssh_key: yes
     ssh_key_bits: 2048
     ssh_key_file: .ssh/id_rsa
@@ -19,21 +33,26 @@
 - name: register uid of solana user
   command: id -u sol
   register: solana_uid
-
+  
 # Get solana uid/gid
 - name: register uid of solana user
   command: id -g sol
   register: solana_gid
 
+# Create other users
 - name: create multiple users
   user:
         name: "{{ item.name }}"
         password: "{{ item.name }}@123"
         shell: /bin/bash
+        groups: solana
         generate_ssh_key: yes
         ssh_key_bits: 2048
         ssh_key_file: .ssh/id_rsa
+  become: yes
+  become_method: "sudo"
   with_items: "{{ users }}"
+
 - authorized_key:
         user: "{{ item.name }}"
         state: present
