@@ -13,7 +13,13 @@
           number: 1
           label: gpt
           state: present
-          fs_type: ext4
+          #        fs_type: ext4
+- name: Format /dev/nvme0n1p1 ext4 partition
+  community.general.filesystem:
+          fstype: ext4
+          dev: /dev/nvme0n1p1
+          opts: -cc
+
 - name: "Get UUID for partition"
   command: blkid -s PARTUUID -o value /dev/nvme0n1p1
   register: disk_blkid
@@ -26,6 +32,15 @@
           opts: defaults
           state: mounted
 
+- name: Copy /etc/skel files in /home/sol
+  ansible.builtin.copy:
+          src: '/etc/skel/{{ item }}'
+          dest: '/home/sol/{{ item }}'
+  with_items:
+          - .bash_logout
+          - .bashrc
+          - .profile
+
 - name: change /home/sol ownsership 
   ansible.builtin.file:
           path: /home/sol
@@ -34,6 +49,7 @@
           mode: '0755'
           recurse: yes
           state: directory
+
 - name: move script and sh files to sol users
   become: true
   become_user: sol
