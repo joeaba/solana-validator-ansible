@@ -13,12 +13,10 @@
           number: 1
           label: gpt
           state: present
-          #        fs_type: ext4
+          fs_type: ext4
 - name: Format /dev/nvme0n1p1 ext4 partition
-  community.general.filesystem:
-          fstype: ext4
-          dev: /dev/nvme0n1p1
-          opts: -cc
+  shell: |
+          mkfs.ext4 /dev/nvme0n1p1
 
 - name: "Get UUID for partition"
   command: blkid -s PARTUUID -o value /dev/nvme0n1p1
