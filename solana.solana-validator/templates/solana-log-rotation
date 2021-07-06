@@ -3,6 +3,6 @@
   rotate 7
   missingok
   postrotate
-    systemctl kill -s USR1 solana-validator.service
+    systemctl kill -s USR1 sol.service
   endscript
 }
