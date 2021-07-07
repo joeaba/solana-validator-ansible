@@ -1,7 +1,0 @@
-#!/bin/sh
-
-/home/sol/bin/run-monitors.sh &
-
-if [[ -f faucet.json ]]; then
-  echo '/home/sol/bin/run-faucet.sh &
-fi

@@ -1,6 +1,0 @@
-#!/usr/bin/env bash
-# Restart the validator software
-
-set -ex
-sudo systemctl daemon-reload
-sudo systemctl restart sol

@@ -1,5 +1,0 @@
-#!/usr/bin/env bash
-# Stop the validator software
-
-set -ex
-sudo systemctl stop sol
