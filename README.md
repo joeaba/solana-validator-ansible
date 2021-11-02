@@ -20,7 +20,7 @@ An Ansible role to deploy a Solana RPC node. This configures the validator softw
 
 ## Hardware Requirements
 
-A Solana RPC server requires _at least_ the same specs as a Solana validator node, but depending on the usage it should have higher requirements. We recommend using at least a 16 cores, 32 threads CPU with 2.8 GHz clock base, 256 GB of RAM in order to store indexes and 2 TB NVMe to store the Ledger. For more information about hardware requirements, please see [https://docs.solana.com/running-validator/validator-reqs](https://docs.solana.com/running-validator/validator-reqs).
+A Solana RPC server requires _at least_ the same specs as a Solana validator node, but depending on the usage it should have higher requirements. We recommend using at least a 16 cores, 32 threads CPU with 2.8 GHz clock base, 256 GB of RAM in order to store indexes and 2 TB NVMe to store the Ledger. For more information about hardware requirements, please refer to [https://docs.solana.com/running-validator/validator-reqs](https://docs.solana.com/running-validator/validator-reqs).
 
 ## Software Requirements
 
